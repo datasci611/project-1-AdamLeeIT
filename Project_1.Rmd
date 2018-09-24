@@ -1,10 +1,13 @@
 ---
-title: "Project_1_AML"
+title: "Let it Grow: Measurements and Plots of Growth"
+subtitle: "Project 1"
 author: "Adam M Lee"
 date: "September 20, 2018"
 output: 
   html_document:
     theme: cerulean
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -145,9 +148,9 @@ Overall, of the `r nrow(plyr::count(t[["data"]]))` total records in the Tooth da
 
 *Dose*|*Min*|*Max*
 ------|-----|------
-0.5|`r min(filter(ToothGrowth,dose==0.5)$len)`|`r max(filter(ToothGrowth,dose==0.5)$len)`
-1.0|`r min(filter(ToothGrowth,dose==1.0)$len)`|`r max(filter(ToothGrowth,dose==1.0)$len)`
-2.0|`r min(filter(ToothGrowth,dose==2.0)$len)`|`r max(filter(ToothGrowth,dose==2.0)$len)`
+0.5|`r min(dplyr::filter(ToothGrowth,dose==0.5)$len)`|`r max(dplyr::filter(ToothGrowth,dose==0.5)$len)`
+1.0|`r min(dplyr::filter(ToothGrowth,dose==1.0)$len)`|`r max(dplyr::filter(ToothGrowth,dose==1.0)$len)`
+2.0|`r min(dplyr::filter(ToothGrowth,dose==2.0)$len)`|`r max(dplyr::filter(ToothGrowth,dose==2.0)$len)`
 
 The average tooth growth length by supplement category is  `r by(t$data$len,t$data$supp,mean)` (OJ, VC respectively). The orange juice supplement promotes more growth in general compared to the absorbic acid (VC). 
 
