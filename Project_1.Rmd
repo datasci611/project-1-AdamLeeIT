@@ -1,0 +1,153 @@
+---
+title: "Project_1_AML"
+author: "Adam M Lee"
+date: "September 20, 2018"
+output: 
+  html_document:
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Comparing Plant Growth Between Treatments
+ | 
+-------------------------------------------- | --------------------------------------------
+In this experiment plants were grown in three groups. Two groups were given plant treatments to test for its effect on the growth of the plant, then the third set acted as a control. The plants were then dried, and weighed to determine which treatment had higher growth enhancement to organic matter.  | ![](https://us.123rf.com/450wm/baldion/baldion1704/baldion170400133/76922070-vector-illustration-of-a-set-of-green-icons-plant-growth-phase-in-a-pot-isolated-on-white-background.jpg?ver=6)
+
+### Density Plot of Dried Plant Weight
+
+The following Plot compares the control, and the two treatments dried plant weights by density and illustrates the variance and effectiveness of each group. 
+
+```{r PlantGrowth_Plot ,fig.width = 10,fig.align='center'}
+g <- ggplot(PlantGrowth, aes(weight))
+levels(g[["data"]][["group"]])[levels(g[["data"]][["group"]])=="ctrl"]<-"Control"
+levels(g[["data"]][["group"]])[levels(g[["data"]][["group"]])=="trt1"]<-"Treatment 1"
+levels(g[["data"]][["group"]])[levels(g[["data"]][["group"]])=="trt2"]<-"Treatment 2"
+g + geom_density(aes(fill=factor(group)), alpha=0.8) + 
+     labs(title="Density plot", 
+          subtitle="Plant Growth with Treatments",
+          caption="Source: PlantGrowth",
+          x="Dried Plant Weight",
+          fill="Treatment Group")+facet_wrap(~ group)
+```
+
+###PlantGrowth Summary
+```{r plantgrowth_summary}
+summary(PlantGrowth)
+```
+###PlantGrowth Synopsis
+Overall, of the `r count(g[["data"]])` total records in the PlantGrowth data set.
+The "Control" group has 
+`r sum(g[["data"]][["group"]]=="Control",na.rm = TRUE)` samples, 
+the Treatment 1 group has 
+`r sum(g[["data"]][["group"]]=="Treatment 1",na.rm = TRUE)`, and the Treatment 2 has 
+`r sum(g[["data"]][["group"]]=="Treatment 2",na.rm = TRUE)` samples. Each group has the following means: by 
+`r by(g$data$weight,g$data$group,mean)` . 
+This clearly shows that Treatment 2 is superiour to Treatment 1, and that Treatment 1 even diminishes plant growth compared to the control. It would seems Treatment 2 is close to Miracle Grow, while Treatment 1 is more akin to RoundUp!
+
+-----------------------------------------------------
+
+# Trending Growth of Loblolly Pines
+```{r echo=FALSE}
+l <- ggplot(Loblolly, aes(age,height,color=Seed))
+```
+ | 
+-------------------------------------------- | --------------------------------------------
+This dataset measures the height of Loblolly Pines over 25 years. My yard is full of Loblolly Pines, and I thought it would be interesting to guessimate the age of my trees based off this dataset. My trees are at least 60 feet tall, perhaps even 80! | ![](https://www.srs.fs.usda.gov/compass/wp-content/uploads/2014/03/03.24.%20Loblolly%20for%20Web.jpg)
+
+### Line Chart of Loblolly Pines over 25 Years
+
+The following line chart plots the growth of the `r nrow(plyr::count(l[["data"]][["Seed"]]))` seeds over the 25 year span. 
+```{r LoblollyPlot ,fig.width = 10,fig.align='center'}
+l + geom_line( alpha=0.8) + 
+     labs(title="Loblolly Height", 
+          subtitle="Growth Over Years",
+          caption="Source: Loblolly", 
+          x="Tree height (ft)",
+          y="Tree Age (yr)")
+```
+
+###Loblolly Summary
+```{r Loblolly_summary}
+summary(Loblolly)
+```
+###Loblolly Synopsis
+
+Overall, of the `r nrow(plyr::count(l[["data"]]))` total records in the Loblolly data Each of the `r nrow(plyr::count(l[["data"]][["Seed"]]))` was measured at the 3rd, 5th and then every 5 year period.At the end of the 25 years the average height of the Loblolly Pine is `r max(by(l$data$height,l$data$age,mean))` ft! That means my trees are at least 25 years old if not more!
+
+----------------------------------------------------
+
+# Circumference Growth of Orange Trees
+```{r echo=FALSE}
+o <- ggplot(Orange, aes(age,circumference,color=Tree))
+```
+ | 
+-------------------------------------------- | --------------------------------------------
+Now that we have measured plant weight and height, let us measure and explore girth or circumference. Oranges, being my favorite fruit (up there with bananas but there are no banana data sets). The Orange data set measures orange tree's circumference over days since 12/31/1968 for a total of `r max(o$data$age)` days. |![](https://cdn.britannica.com/s:s:300x200/67/174567-004-900033A3.jpg)
+
+### Violin Chart of Orange Tree Circumference
+
+The following violin chart plots the growth of the `r nrow(plyr::count(o[["data"]][["Tree"]]))` trees circumference over a span of `r max(o$data$age)` days. I chose the violin chart to illustrate the increase of width (girth) as time increases and faceted on each Tree. 
+
+```{r OrangePlot, fig.width=10,fig.align='center'}
+ggplot(Orange, aes(circumference, age)) + 
+   geom_violin(aes(fill = Tree)) + facet_grid(~Tree) + 
+     labs(title="Orange Tree Circumference", 
+          subtitle="Thickness Over Days",
+          caption="Source: Orange", 
+          y="Tree Age (days)",
+          x="Tree Circumference (mm)")
+```
+
+###Orange Summary
+```{r Orange_summary}
+summary(Orange)
+```
+###Orange Synopsis
+
+Overall, of the `r nrow(plyr::count(o[["data"]]))` total records in the Orange data Each of the `r nrow(plyr::count(o[["data"]][["Tree"]]))` trees was measured on average of every 244 days.
+
+The trees grew on average of 24mm per measurement period, with the largest gain of 55mm (by tree 4) and the smallest of 0mm (tree 2).At the end of the time span the average circumference of the Orange Tree is `r max(by(o$data$circumference,o$data$age,mean))` mm. Which is only 6.9inches, so orange trees are pretty thin on average. 
+
+------------------------------------------
+
+# The Effect of Vitamin C on Tooth Growth in Guinea Pigs
+```{r echo=FALSE}
+t <- ggplot(ToothGrowth, aes(len,dose,color=supp))
+```
+ | 
+-------------------------------------------- | --------------------------------------------
+This time we are moving onto a different animal, and literally an animal. Since we just talked about oranges (which are very high in vitamin C) lets measure the effect of vitamin C on the tooth growth of the guinea pig. The ToothGrowth data set is a response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid  |![](https://cdn.britannica.com/s:700x450/93/150093-004-D853859C.jpg)
+
+### Bar Chart of Tooth Growth in Guinea Pigs
+
+The following violin chart plots the growth of the `r nrow(plyr::count(o[["data"]][["Tree"]]))` trees circumference over the time span. I chose the violin chart to illustrate the increase of width (girth) as time increases and faceted on each Tree. 
+
+```{r ToothPlot, fig.width=10,fig.align='center',warning=FALSE,message=FALSE}
+t <- ggplot(ToothGrowth, aes(dose, len))
+t + geom_boxplot(aes(fill=factor(dose))) +geom_jitter(width = .02)+ geom_smooth(aes(dose,len),fullrange = TRUE,position = "dodge") + facet_grid(~supp)+
+   labs(title="Smooth Box plot", 
+        subtitle="ToothGrowth: Length vs. Dose per Supplement",
+        caption="Source: ToothGrowth",
+        x="Dose(mg/day)",
+        y="Length(um)")
+```
+
+###Tooth Summary
+```{r ToothGrowth_summary}
+summary(ToothGrowth)
+```
+###Tooth Synopsis
+Overall, of the `r nrow(plyr::count(t[["data"]]))` total records in the Tooth data. There are 3 columns, supp is a factor with `r first(dplyr::distinct(ToothGrowth,supp))` as values. Dose has distinct values of `r first(dplyr::distinct(ToothGrowth,dose))`. The following table has min/max of tooth growth per dose
+
+*Dose*|*Min*|*Max*
+------|-----|------
+0.5|`r min(filter(ToothGrowth,dose==0.5)$len)`|`r max(filter(ToothGrowth,dose==0.5)$len)`
+1.0|`r min(filter(ToothGrowth,dose==1.0)$len)`|`r max(filter(ToothGrowth,dose==1.0)$len)`
+2.0|`r min(filter(ToothGrowth,dose==2.0)$len)`|`r max(filter(ToothGrowth,dose==2.0)$len)`
+
+The average tooth growth length by supplement category is  `r by(t$data$len,t$data$supp,mean)` (OJ, VC respectively). The orange juice supplement promotes more growth in general compared to the absorbic acid (VC). 
+
